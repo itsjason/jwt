@@ -136,6 +136,22 @@ namespace JWT
             return payloadData;
         }
 
+        /// <summary>
+        /// Given a JWT, decode it and return the payload as an instance of type T (by deserializing it with <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).
+        /// </summary>
+        /// <param name="token">The JWT.</param>
+        /// <param name="key">The key that was used to sign the JWT.</param>
+        /// <param name="verify">Whether to verify the signature (default is true).</param>
+        /// <returns>An object representing the payload.</returns>
+        /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the deserialized token cannot be assigned to the target type.</exception>
+        public static T Decode<T>(string token, string key, bool verify = true)
+        {
+            var payloadJson = JsonWebToken.Decode(token, key, verify);
+            var payloadData = jsonSerializer.Deserialize<T>(payloadJson);
+            return payloadData;
+        }
+
         private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
         {
             switch (algorithm)
